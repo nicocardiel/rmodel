@@ -1,0 +1,2 @@
+        CHARACTER*4 VERSION
+        PARAMETER(VERSION='02.6')
