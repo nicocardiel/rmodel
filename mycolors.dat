@@ -1,0 +1,13 @@
+# USER DEFINED COLORS
+#------------------------------------------------------------------------------ 
+# index   red  green  blue
+#------------------------------------------------------------------------------ 
+    0     0.0   0.0    0.0    # (black; do not change)
+    1     1.0   1.0    1.0    # (white; do not change)
+#------------------------------------------------------------------------------
+    2     1.0   0.0    0.0    # param#1 labels                 (originally red)
+    3     0.0   1.0    0.0    # param#2 labels                (originally gren)
+    4     0.0   0.0    1.0    # pseudo-ellipses               (originally blue)
+    5     0.0   1.0    1.0    # default data points           (originally cyan)
+    6     1.0   0.0    1.0    # bivariate fits             (originally magenta)
+    7     1.0   1.0    0.0    # linear fit                  (originally yellow)
