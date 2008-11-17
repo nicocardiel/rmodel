@@ -44,6 +44,8 @@ C
         COMMON/BLKOBJPLOT3/OBJNAME
         COMMON/BLKOBJPLOT4/OBJ_INFILE
 C------------------------------------------------------------------------------
+        L1=0
+        L2=0
         IF(IMODE.EQ.0)THEN
           LOGFILE=.FALSE.
           DO WHILE(.NOT.LOGFILE)
