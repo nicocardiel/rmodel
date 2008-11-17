@@ -285,9 +285,10 @@ C chequeamos que tenemos los ficheros con las especificaciones de cada modelo
      +     //'.ext'
           INQUIRE(FILE=DEFMODELFILE(I),EXIST=LOGFILE)
           IF(.NOT.LOGFILE)THEN
-            WRITE(*,100) 'FATAL ERROR: the file "'
-            WRITE(*,100) MODELFILE(I)(L1:L2)//'.def'
-            WRITE(*,101) '" does not exist.'
+            WRITE(*,101) 'FATAL ERROR: the following file does'//
+     +       ' not exist:'
+            WRITE(*,101) RMODEL_DIR(LD1:LD2)//'/'//
+     +       MODELFILE(I)(L1:L2)//'.def'
             STOP
           ELSE !leemos la primera linea con descripcion del modelo
             OPEN(10,FILE=DEFMODELFILE(I),STATUS='OLD',FORM='FORMATTED')
