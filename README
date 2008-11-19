@@ -1,0 +1,9 @@
+This is rmodel, a program that interpolates stellar population parameters from
+line-strength index measurements, making use of stellar population model
+predictions.
+
+This software is distributed under GPL , either version 3 of the License, or
+(at your option) any later version. See the file COPYING for details.
+
+Maintainer: ncl@astrax.fis.ucm.es
+Webpage: http://guaix.fis.ucm.es/projects/rmodel

@@ -18,8 +18,9 @@ AC_ARG_VAR(DATA_DIR,[Directory to install definition files and models])
 
 AC_CONFIG_FILES([Makefile 
                  src/Makefile
-                 src/version.inc
+                 src/dimensions.inc
                  src/rmodel.inc
+                 src/version.inc
                  models/Makefile
                  m4/Makefile
                  definitions/Makefile])

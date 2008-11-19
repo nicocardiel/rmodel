@@ -1,16 +1,21 @@
 C------------------------------------------------------------------------------
-C Version 22-October-2008                                  File: chequea_area.f
+C Copyright 2008 Nicolas Cardiel
+C
+C This file is part of rmodel.
+C 
+C Rmodel is free software: you can redistribute it and/or modify
+C it under the terms of the GNU General Public License as published by
+C the Free Software Foundation, either version 3 of the License, or
+C (at your option) any later version.
+C 
+C Rmodel is distributed in the hope that it will be useful,
+C but WITHOUT ANY WARRANTY; without even the implied warranty of
+C MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+C GNU General Public License for more details.
+C 
+C You should have received a copy of the GNU General Public License
+C along with rmodel. If not, see <http://www.gnu.org/licenses/>.
 C------------------------------------------------------------------------------
-C Copyright N. Cardiel, Departamento de Astrofisica
-C Universidad Complutense de Madrid, 28040-Madrid, Spain
-C E-mail: ncl@astrax.fis.ucm.es
-C------------------------------------------------------------------------------
-C This routine is free software; you can redistribute it and/or modify it
-C under the terms of the GNU General Public License as published by the Free
-C Software Foundation; either version 2 of the License, or (at your option) any
-C later version. See the file gnu-public-license.txt for details.
-C------------------------------------------------------------------------------
-C******************************************************************************
 C Calculamos el área usando Monte Carlo. Para ello determinamos si un punto
 C está dentro o no del polígono mirando si el producto vectorial tiene
 C siempre el mismo signo.
