@@ -251,6 +251,15 @@ C
         COMMON/BLKOBJPLOT3/OBJNAME
         COMMON/BLKOBJPLOT4/OBJ_INFILE
 C------------------------------------------------------------------------------
+C Welcome message
+        WRITE(*,101) '***********************************************'
+        WRITE(*,101) '       Welcome to rmodel '//
+     +   '(version '//VERSION//')'
+        WRITE(*,101) '-----------------------------------------------'
+        WRITE(*,101) '          For more information visit:'
+        WRITE(*,101) '    http://guaix.fis.ucm.es/projects/rmodel'
+        WRITE(*,101) '***********************************************'
+        WRITE(*,*)
 C definimos los ficheros con las especificaciones de cada modelo
 C
 C NOTA: si se modifica incluyendo nuevos modelos, cambiar tambien la dimension
