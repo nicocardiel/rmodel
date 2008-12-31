@@ -196,11 +196,11 @@ C
         CHARACTER*255 CMODELNAME
         CHARACTER*255 CLABEL(2)
         CHARACTER*255 CDUMMY
-        CHARACTER*255 MODELFILE(NMAX_MODELS)
-        CHARACTER*255 DEFMODELFILE(NMAX_MODELS)
-        CHARACTER*255 DATMODELFILE(NMAX_MODELS)
-        CHARACTER*255 EXTMODELFILE(NMAX_MODELS)
-        CHARACTER*255 CMODEL(NMAX_MODELS)
+        CHARACTER*255 MODELFILE(0:NMAX_MODELS)
+        CHARACTER*255 DEFMODELFILE(0:NMAX_MODELS)
+        CHARACTER*255 DATMODELFILE(0:NMAX_MODELS)
+        CHARACTER*255 EXTMODELFILE(0:NMAX_MODELS)
+        CHARACTER*255 CMODEL(0:NMAX_MODELS)
         CHARACTER*255 TTER
         CHARACTER*255 BATCHFILE
         CHARACTER*255 FILELOG
@@ -216,6 +216,7 @@ C
         CHARACTER*1000 CLONGLINE,CBACKUP_LONGLINE
         LOGICAL LECHO
         LOGICAL LOGFILE
+        LOGICAL LMODEL_USER
         LOGICAL LLOG(2),LXLOG,LYLOG
         LOGICAL LREV(2)
         LOGICAL LABPAR(2)
@@ -257,7 +258,7 @@ C Welcome message
      +   '(version '//VERSION//')'
         WRITE(*,101) '-----------------------------------------------'
         WRITE(*,101) '          For more information visit:'
-        WRITE(*,101) '    http://guaix.fis.ucm.es/projects/rmodel'
+        WRITE(*,101) ' http://www.ucm.es/info/Astrof/software/rmodel'
         WRITE(*,101) '***********************************************'
         WRITE(*,*)
 C definimos los ficheros con las especificaciones de cada modelo
@@ -265,7 +266,8 @@ C
 C NOTA: si se modifica incluyendo nuevos modelos, cambiar tambien la dimension
 C       de NMAX_MODELS en el fichero dimensions.inc
 C
-        DATA(MODELFILE(I),I=1,NMAX_MODELS) /
+        DATA(MODELFILE(I),I=0,NMAX_MODELS) /
+     +   'model_user',
      +   'models/model_bc01',
      +   'models/model_bc03',
      +   'models/model_lw05',
@@ -277,7 +279,7 @@ C
         END DO
 C parametros iniciales
         NSEED=-1
-        NMODEL_OLD=0 !todavia ninguno
+        NMODEL_OLD=-1 !todavia ninguno
         CFPOINT='3'
         CPAUSE='y'
         L39=.FALSE.
@@ -289,22 +291,33 @@ C------------------------------------------------------------------------------
         NUMTEMP=0 !evita un warning de compilacion
 C------------------------------------------------------------------------------
 C chequeamos que tenemos los ficheros con las especificaciones de cada modelo
-        DO I=1,NMAX_MODELS
+        DO I=0,NMAX_MODELS
           L1=TRUEBEG(MODELFILE(I))
           L2=TRUELEN(MODELFILE(I))
-          DEFMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//MODELFILE(I)(L1:L2)
-     +     //'.def'
-          DATMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//MODELFILE(I)(L1:L2)
-     +     //'.dat'
-          EXTMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//MODELFILE(I)(L1:L2)
-     +     //'.ext'
-          INQUIRE(FILE=DEFMODELFILE(I),EXIST=LOGFILE)
-          IF(.NOT.LOGFILE)THEN
-            WRITE(*,101) 'FATAL ERROR: the following file does'//
-     +       ' not exist:'
-            WRITE(*,101) RMODEL_DIR(LD1:LD2)//'/'//
+          IF(I.EQ.0)THEN
+            DEFMODELFILE(I)=MODELFILE(I)(L1:L2)//'.def'
+            DATMODELFILE(I)=MODELFILE(I)(L1:L2)//'.dat'
+            EXTMODELFILE(I)=MODELFILE(I)(L1:L2)//'.ext'
+          ELSE
+            DEFMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//
      +       MODELFILE(I)(L1:L2)//'.def'
-            STOP
+            DATMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//
+     +       MODELFILE(I)(L1:L2)//'.dat'
+            EXTMODELFILE(I)=RMODEL_DIR(LD1:LD2)//'/'//
+     +       MODELFILE(I)(L1:L2)//'.ext'
+          END IF
+          INQUIRE(FILE=DEFMODELFILE(I),EXIST=LOGFILE)
+          IF(I.EQ.0) LMODEL_USER=LOGFILE
+          IF(.NOT.LOGFILE)THEN
+            IF(I.EQ.0)THEN
+              CMODEL(I)='NONE (file model_user.def not found)'
+            ELSE
+              WRITE(*,101) 'FATAL ERROR: the following file does'//
+     +         ' not exist:'
+              WRITE(*,101) RMODEL_DIR(LD1:LD2)//'/'//
+     +         MODELFILE(I)(L1:L2)//'.def'
+              STOP
+            END IF
           ELSE !leemos la primera linea con descripcion del modelo
             OPEN(10,FILE=DEFMODELFILE(I),STATUS='OLD',FORM='FORMATTED')
             READ(10,101) CMODEL(I)
@@ -373,12 +386,12 @@ C------------------------------------------------------------------------------
 C Mostramos y elegimos modelo
 10      WRITE(*,*)
 C------------------------------------------------------------------------------
-        DO I=1,NMAX_MODELS
+        DO I=0,NMAX_MODELS
           L1=TRUEBEG(CMODEL(I))
           L2=TRUELEN(CMODEL(I))
           WRITE(*,'(A6,I3.3,A1,1X,A)') 'Model#',I,':',CMODEL(I)(L1:L2)
         END DO
-        IF(NMODEL_OLD.EQ.0)THEN
+        IF(NMODEL_OLD.EQ.-1)THEN
           CDUMMY='@'
         ELSE
           WRITE(CDUMMY,*) NMODEL_OLD
@@ -388,7 +401,12 @@ C------------------------------------------------------------------------------
         IF((COPC.EQ.'q').OR.(COPC.EQ.'Q')) GOTO 998
         IF((INDEX(COPC,'q').EQ.0).AND.(INDEX(COPC,'Q').EQ.0))THEN
           READ(COPC,*) NMODEL
-          IF((NMODEL.LT.1).OR.(NMODEL.GT.NMAX_MODELS))THEN
+          IF((NMODEL.LT.0).OR.(NMODEL.GT.NMAX_MODELS))THEN
+            WRITE(*,100) '**ERROR** Press <CR> to continue...'
+            READ(*,*)
+            GOTO 10
+          END IF
+          IF((NMODEL.EQ.0).AND.(.NOT.LMODEL_USER))THEN
             WRITE(*,100) '**ERROR** Press <CR> to continue...'
             READ(*,*)
             GOTO 10
