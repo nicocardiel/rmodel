@@ -278,6 +278,7 @@ C
           CSEPARATOR(I:I)='#'
         END DO
 C parametros iniciales
+        LMODEL_USER=.FALSE.
         NSEED=-1
         NMODEL_OLD=-1 !todavia ninguno
         CFPOINT='3'
