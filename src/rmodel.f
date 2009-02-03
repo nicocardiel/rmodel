@@ -180,6 +180,7 @@ C
         REAL SNRATX,SNRATY,R1,R2
         REAL MEANERR_PAR1,MEANERR_PAR2
         REAL SIGMAERR_PAR1,SIGMAERR_PAR2
+        REAL MEDIAN_PAR1,MEDIAN_PAR2
         REAL PERC1_PAR1,PERC2_PAR1
         REAL PERC1_PAR2,PERC2_PAR2
         REAL T,AREA_II(3),AREA_AZ(3)
@@ -2307,17 +2308,23 @@ c calculamos media y dispersión
           MEANERR_PAR1=FMEAN0(NSIMUL,DELTA_PAR1,SIGMAERR_PAR1)
           MEANERR_PAR2=FMEAN0(NSIMUL,DELTA_PAR2,SIGMAERR_PAR2)
           PERC1_PAR1=FPERCENT(NSIMUL,DELTA_PAR1,15.87)
+          MEDIAN_PAR1=FPERCENT(NSIMUL,DELTA_PAR1,50.00)
           PERC2_PAR1=FPERCENT(NSIMUL,DELTA_PAR1,84.13)
           PERC1_PAR2=FPERCENT(NSIMUL,DELTA_PAR2,15.87)
+          MEDIAN_PAR2=FPERCENT(NSIMUL,DELTA_PAR2,50.00)
           PERC2_PAR2=FPERCENT(NSIMUL,DELTA_PAR2,84.13)
 c display results
           WRITE(*,101) '* Simulations:'
           WRITE(*,100) '>>>delta(parameter1): mean, sigma..: '
           WRITE(*,*) MEANERR_PAR1,SIGMAERR_PAR1
+          WRITE(*,100) '>>>median..........................: '
+          WRITE(*,*) MEDIAN_PAR1
           WRITE(*,100) '>>>percentiles (approx. +/-1 sigma): '
           WRITE(*,*) PERC1_PAR1,PERC2_PAR1
           WRITE(*,100) '>>>delta(parameter2): mean, sigma..: '
           WRITE(*,*) MEANERR_PAR2,SIGMAERR_PAR2
+          WRITE(*,100) '>>>median..........................: '
+          WRITE(*,*) MEDIAN_PAR2
           WRITE(*,100) '>>>percentiles (approx. +/-1 sigma): '
           WRITE(*,*) PERC1_PAR2,PERC2_PAR2
           WRITE(*,100) 'Suitability check: '
