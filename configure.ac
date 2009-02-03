@@ -1,7 +1,7 @@
 # Process this file with autoconf to produce a configure script.
 # $Id$
 
-AC_INIT(rmodel,03.00,[ncl@astrax.fis.ucm.es])
+AC_INIT(rmodel,03.01,[ncl@astrax.fis.ucm.es])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([config.h.in])
 AM_INIT_AUTOMAKE([foreign])
