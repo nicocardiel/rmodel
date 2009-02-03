@@ -93,6 +93,7 @@ C
         REAL FEXTRAE
         REAL READF
         REAL FMEAN0
+        REAL FPERCENT
         REAL FCHISQR
         CHARACTER*255 READC
         LOGICAL INSIDE_ROMBO
@@ -179,6 +180,8 @@ C
         REAL SNRATX,SNRATY,R1,R2
         REAL MEANERR_PAR1,MEANERR_PAR2
         REAL SIGMAERR_PAR1,SIGMAERR_PAR2
+        REAL PERC1_PAR1,PERC2_PAR1
+        REAL PERC1_PAR2,PERC2_PAR2
         REAL T,AREA_II(3),AREA_AZ(3)
         REAL XMIN_,XMAX_,YMIN_,YMAX_,DX_,DY_
         REAL XEL(NPOINTSELLIPSE),YEL(NPOINTSELLIPSE)
@@ -2303,12 +2306,20 @@ C              indices no medidos en magnitudes
 c calculamos media y dispersión
           MEANERR_PAR1=FMEAN0(NSIMUL,DELTA_PAR1,SIGMAERR_PAR1)
           MEANERR_PAR2=FMEAN0(NSIMUL,DELTA_PAR2,SIGMAERR_PAR2)
+          PERC1_PAR1=FPERCENT(NSIMUL,DELTA_PAR1,15.87)
+          PERC2_PAR1=FPERCENT(NSIMUL,DELTA_PAR1,84.13)
+          PERC1_PAR2=FPERCENT(NSIMUL,DELTA_PAR2,15.87)
+          PERC2_PAR2=FPERCENT(NSIMUL,DELTA_PAR2,84.13)
 c display results
           WRITE(*,101) '* Simulations:'
-          WRITE(*,100) '>>>delta(parameter1): mean, sigma: '
+          WRITE(*,100) '>>>delta(parameter1): mean, sigma..: '
           WRITE(*,*) MEANERR_PAR1,SIGMAERR_PAR1
-          WRITE(*,100) '>>>delta(parameter2): mean, sigma: '
+          WRITE(*,100) '>>>percentiles (approx. +/-1 sigma): '
+          WRITE(*,*) PERC1_PAR1,PERC2_PAR1
+          WRITE(*,100) '>>>delta(parameter2): mean, sigma..: '
           WRITE(*,*) MEANERR_PAR2,SIGMAERR_PAR2
+          WRITE(*,100) '>>>percentiles (approx. +/-1 sigma): '
+          WRITE(*,*) PERC1_PAR2,PERC2_PAR2
           WRITE(*,100) 'Suitability check: '
           WRITE(*,*) SIGMAERR_PAR1*SIGMAERR_PAR1+
      +     SIGMAERR_PAR2*SIGMAERR_PAR2,
