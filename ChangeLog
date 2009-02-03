@@ -1,0 +1,4 @@
+Version 03.01 -> including percentiles in the estimation of uncertainties in
+                 the parameters (specially usefull when the standard deviation 
+		 is not a good indication of the scatter when the histograms
+		 are highly asymmetric).
