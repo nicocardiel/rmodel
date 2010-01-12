@@ -26,6 +26,10 @@ C unidad el valor del parametro NMAX_MODELS en el fichero "dimensions.inc",
 C e incluir en "rmodel.f" la raiz del nombre de los modelos (ir a la linea
 C inicial del codigo en la que se define el DATA(MODELFILE(I)...).
 C
+C En una versión más reciente, también se ha incluido NMAX_MODELS_MILES
+C para poder incluir modelos calculados con los modelos de MILES con una
+C numeración diferente.
+C
 C------------------------------------------------------------------------------
 C Para economizar memoria, se asume que los modelos estan en una tabla
 C bidimensional dividida en dos partes. En las primeras columnas van variando
@@ -133,6 +137,7 @@ C
         INTEGER NP_IN_ELIPSE(3)
         INTEGER NFIT
         INTEGER NOBJPLOT,NCURRENT_OBJECT
+        INTEGER OBJSTATUS
         REAL XPARAMETER(NMAX_LEN_PARAMETER,NMAX_PARAMETERS)
         REAL XPARAM_MIN,XPARAM_MAX
         REAL FDUM_XPARAMETER(NMAX_PARAMETERS)
@@ -200,11 +205,11 @@ C
         CHARACTER*255 CMODELNAME
         CHARACTER*255 CLABEL(2)
         CHARACTER*255 CDUMMY
-        CHARACTER*255 MODELFILE(0:NMAX_MODELS)
-        CHARACTER*255 DEFMODELFILE(0:NMAX_MODELS)
-        CHARACTER*255 DATMODELFILE(0:NMAX_MODELS)
-        CHARACTER*255 EXTMODELFILE(0:NMAX_MODELS)
-        CHARACTER*255 CMODEL(0:NMAX_MODELS)
+        CHARACTER*255 MODELFILE(0:NMAX_MODELS+NMAX_MODELS_MILES)
+        CHARACTER*255 DEFMODELFILE(0:NMAX_MODELS+NMAX_MODELS_MILES)
+        CHARACTER*255 DATMODELFILE(0:NMAX_MODELS+NMAX_MODELS_MILES)
+        CHARACTER*255 EXTMODELFILE(0:NMAX_MODELS+NMAX_MODELS_MILES)
+        CHARACTER*255 CMODEL(0:NMAX_MODELS+NMAX_MODELS_MILES)
         CHARACTER*255 TTER
         CHARACTER*255 BATCHFILE
         CHARACTER*255 FILELOG
@@ -229,7 +234,7 @@ C
         LOGICAL LINSIDE_ROMBO
         LOGICAL LNOT_ENOUGH
         LOGICAL LEXTERNAL
-        LOGICAL L39
+        LOGICAL L14,L39
 C
         COMMON/BLKNSEED/NSEED
         COMMON/BLKLECHO/LECHO
@@ -257,26 +262,31 @@ C
         COMMON/BLKOBJPLOT4/OBJ_INFILE
 C------------------------------------------------------------------------------
 C Welcome message
-        WRITE(*,101) '***********************************************'
-        WRITE(*,101) '       Welcome to Rmodel '//
+        WRITE(*,203)
+        WRITE(*,101) '                       Welcome to Rmodel '//
      +   '(version '//VERSION//')'
-        WRITE(*,101) '-----------------------------------------------'
-        WRITE(*,101) '          For more information visit:'
+        WRITE(*,202)
+        WRITE(*,100) '   For more information visit:'
         WRITE(*,101) ' http://www.ucm.es/info/Astrof/software/rmodel'
-        WRITE(*,101) '***********************************************'
+        WRITE(*,203)
         WRITE(*,*)
 C definimos los ficheros con las especificaciones de cada modelo
 C
 C NOTA: si se modifica incluyendo nuevos modelos, cambiar tambien la dimension
-C       de NMAX_MODELS en el fichero dimensions.inc
+C       de NMAX_MODELS o de NMAX_MODELS_MILES en el fichero dimensions.inc
 C
-        DATA(MODELFILE(I),I=0,NMAX_MODELS) /
+        DATA(MODELFILE(I),I=0,NMAX_MODELS)
+     +  /
      +   'model_user',
      +   'models/model_bc01',
      +   'models/model_bc03',
      +   'models/model_lw05',
      +   'models/model_thomas03',
      +   'models/model_vazdekis06'
+     +  /
+        DATA(MODELFILE(I),I=NMAX_MODELS+1,NMAX_MODELS+NMAX_MODELS_MILES)
+     +  /
+     +   'models/MILES_KU_LIS-14.0'
      +  /
         DO I=1,79
           CSEPARATOR(I:I)='#'
@@ -287,6 +297,7 @@ C parametros iniciales
         NMODEL_OLD=-1 !todavia ninguno
         CFPOINT='3'
         CPAUSE='y'
+        L14=.TRUE.
         L39=.FALSE.
 C definimos el directorio de instalacion del programa
         RMODEL_DIR=RMODEL_DIR_
@@ -296,7 +307,7 @@ C------------------------------------------------------------------------------
         NUMTEMP=0 !evita un warning de compilacion
 C------------------------------------------------------------------------------
 C chequeamos que tenemos los ficheros con las especificaciones de cada modelo
-        DO I=0,NMAX_MODELS
+        DO I=0,NMAX_MODELS+NMAX_MODELS_MILES
           L1=TRUEBEG(MODELFILE(I))
           L2=TRUELEN(MODELFILE(I))
           IF(I.EQ.0)THEN
@@ -391,25 +402,43 @@ C------------------------------------------------------------------------------
 C Mostramos y elegimos modelo
 10      WRITE(*,*)
 C------------------------------------------------------------------------------
-        DO I=0,NMAX_MODELS
+        WRITE(*,201)
+        DO I=0,NMAX_MODELS+NMAX_MODELS_MILES
+          IF(I.LE.NMAX_MODELS)THEN
+            II=I
+          ELSE
+            II=I-NMAX_MODELS+100
+          END IF
+          IF(I.EQ.NMAX_MODELS+1) WRITE(*,202)
           L1=TRUEBEG(CMODEL(I))
           L2=TRUELEN(CMODEL(I))
-          WRITE(*,'(A6,I3.3,A1,1X,A)') 'Model#',I,':',CMODEL(I)(L1:L2)
+          WRITE(*,'(A6,I3.3,A1,1X,A)') 'Model#',II,':',CMODEL(I)(L1:L2)
         END DO
         IF(NMODEL_OLD.EQ.-1)THEN
           CDUMMY='@'
         ELSE
+          IF(NMODEL_OLD.GT.NMAX_MODELS)
+     +     NMODEL_OLD=NMODEL_OLD-NMAX_MODELS+100
           WRITE(CDUMMY,*) NMODEL_OLD
         END IF
+        WRITE(*,201)
         COPC(1:5)=READC(IDLOG,'Model number (q=QUIT)',
      +   CDUMMY,'qQ0123456789')
+C..............................................................................
         IF((COPC.EQ.'q').OR.(COPC.EQ.'Q')) GOTO 998
         IF((INDEX(COPC,'q').EQ.0).AND.(INDEX(COPC,'Q').EQ.0))THEN
           READ(COPC,*) NMODEL
-          IF((NMODEL.LT.0).OR.(NMODEL.GT.NMAX_MODELS))THEN
+          IF(NMODEL.LT.0)THEN
             WRITE(*,100) '**ERROR** Press <CR> to continue...'
             READ(*,*)
             GOTO 10
+          END IF
+          IF(NMODEL.GT.NMAX_MODELS)THEN
+            IF((NMODEL.LE.100).OR.(NMODEL.GT.100+NMAX_MODELS_MILES))THEN
+              WRITE(*,100) '**ERROR** Press <CR> to continue...'
+              READ(*,*)
+              GOTO 10
+            END IF
           END IF
           IF((NMODEL.EQ.0).AND.(.NOT.LMODEL_USER))THEN
             WRITE(*,100) '**ERROR** Press <CR> to continue...'
@@ -421,7 +450,16 @@ C------------------------------------------------------------------------------
           READ(*,*)
           GOTO 10
         END IF
-        WRITE(77,112) COPC,'# Model number'
+C
+        L=TRUELEN(COPC)
+        WRITE(77,100) '       '
+        IF(L.LT.5)THEN
+          DO I=1,5-L
+            WRITE(77,100) ' '
+          END DO
+        END IF
+        WRITE(77,101) COPC(1:L)//' # Model number'
+        IF(NMODEL.GT.100) NMODEL=NMODEL-100+NMAX_MODELS
 C------------------------------------------------------------------------------
 C Valores por defecto
         LABPAR(1)=.TRUE.
@@ -711,9 +749,10 @@ C indices
             READ(10,*)
           END DO
         END IF
+        !......................................................................
         I=0
-20      I=I+1
-        !calculamos que parametros esperamos
+20      I=I+1 !..........numero de líneas efectivas (con valores útiles) leidas
+        !calculamos qué parametros esperamos
         DO J=1,NPARAMETERS
           IF(J.EQ.1)THEN
             NUMTEMP=1
@@ -723,6 +762,8 @@ C indices
           KEXPECTED(J)=MOD((I-1)/NUMTEMP,LEN_PARAMETER(J))+1
         END DO
 22      READ(10,101,ERR=997,END=996) CLONGLINE
+        !si la linea contiene tabuladores, los eliminamos
+        IF(INDEX(CLONGLINE,CHAR(9)).NE.0) CALL CLEANTAB(CLONGLINE)
         !si alguno de los parametros leidos no coincide con lo esperado,
         !nos saltamos la linea leida y pasamos a la siguiente
         DO J=1,NPARAMETERS
@@ -747,6 +788,7 @@ C indices
             GOTO 22
           END IF
         END DO
+        !......................................................................
         !leemos los indices que no son compuestos
         NCOLUMN=NPARAMETERS
         DO J=1,NINDICES
@@ -1051,7 +1093,7 @@ C vamos a simular que elegimos la opcion '?' para cada objeto
           OPEN(39,FILE=CRESULTSFILE,STATUS='UNKNOWN',FORM='FORMATTED')
           L39=.TRUE.
           WRITE(39,101) '#'//OBJ_INFILE(L1:L2)
-          WRITE(39,100) '#object_name '
+          WRITE(39,100) '#object_name status '
           CALL RSPACE(CPARAMETER(NPARAM(1)),'closest point',CLINEOUT)
           WRITE(39,100) CLINEOUT(1:TRUELEN(CLINEOUT))//' '
           CALL RSPACE(CPARAMETER(NPARAM(2)),'closest point',CLINEOUT)
@@ -1081,6 +1123,7 @@ C si es un punto, lo introducimos y buscamos lineas isoparametricas para el
 C mejor ajuste
 91      CALL PLOT_DIAGRAM(IDLOG)
         IF(CCHAR.EQ.'?')THEN
+          OBJSTATUS=0 !salvo que se demuestre lo contrario
           !pedimos el punto con su correspondiente error
           IF(LEXTERNAL)THEN
             INDEX_X=XOBJ(NCURRENT_OBJECT)
@@ -1176,6 +1219,7 @@ C mejor ajuste
               WRITE(*,*)
               WRITE(*,101) 'WARNING: point outside model!'
               WRITE(*,101) '>>> finding closest point in any polygon'
+              OBJSTATUS=1
             END IF
             !buscamos el punto del modelo mas proximo al introducido (sin
             !tener en cuenta si los recorridos en X e Y son diferentes!)
@@ -1825,6 +1869,7 @@ ccc92      IF(CCHAR.EQ.'?')THEN
               WRITE(*,101) ' <UNKNOWN>'
               IF(L39) CLINEA39(1:50)='<UNKNOWN>'
             END IF
+            IF(L39) WRITE(CLINEA39(52:53),'(I2.2)') OBJSTATUS
           END IF
           WRITE(*,101) '* Summary of linear and bivariate fits'
           WRITE(*,101) '======================================'
@@ -1928,7 +1973,7 @@ ccc92      IF(CCHAR.EQ.'?')THEN
               WRITE(77,111) NSEED,'# NSEED for random numbers'
             END IF
             WRITE(*,*)
-            WRITE(*,101) 'Note: the results will be stored in an '//
+            WRITE(*,101) 'Note: the results can be stored in an '//
      +       'ASCII file which will contain'
             WRITE(*,101) '      [Fe/H] and log10[Age(yr)] for the '//
      +       '(index1,index2) previously indicated,'
@@ -1938,56 +1983,63 @@ ccc92      IF(CCHAR.EQ.'?')THEN
      +       'by 361 pairs of points, from angle 0'
             WRITE(*,101) '      to 360---). All these data points'//
      +       ' are contiguous in the same output file.'
-            COUTFILE=READC(IDLOG,'Output file name',
+            COUTFILE=READC(IDLOG,'Output file name (none=no output)',
      +       'rmodel_simul.out','@')
             L1=TRUEBEG(COUTFILE)
             L2=TRUELEN(COUTFILE)
             CALL TOLOG77_STRING(COUTFILE(L1:L2),
      +       'output file for simulations')
+            IF(COUTFILE.EQ.'none')THEN
+              L14=.FALSE.
+            ELSE
+              L14=.TRUE.
+            END IF
           END IF
-          IF(LEXTERNAL)THEN
-            WRITE(CDUMMY(1:8),'(A4,I4.4)') '_obj',NCURRENT_OBJECT
-            L1=TRUEBEG(COUTFILE)
-            L2=TRUELEN(COUTFILE)
+          IF(L14)THEN
+            IF(LEXTERNAL)THEN
+              WRITE(CDUMMY(1:8),'(A4,I4.4)') '_obj',NCURRENT_OBJECT
+              L1=TRUEBEG(COUTFILE)
+              L2=TRUELEN(COUTFILE)
             OPEN(14,FILE=COUTFILE(L1:L2)//CDUMMY(1:8),STATUS='UNKNOWN',
-     +       FORM='FORMATTED')
-          ELSE
-            OPEN(14,FILE=COUTFILE,STATUS='UNKNOWN',FORM='FORMATTED')
-          END IF
-          WRITE(14,100) '# Object: '
-          IF(LEXTERNAL)THEN
-            L2=TRUELEN(OBJNAME(NCURRENT_OBJECT))
-            IF(L2.GT.0)THEN
-              L1=TRUEBEG(OBJNAME(NCURRENT_OBJECT))
-              WRITE(14,101) '<'//OBJNAME(NCURRENT_OBJECT)(L1:L2)//'>'
+     +         FORM='FORMATTED')
+            ELSE
+              OPEN(14,FILE=COUTFILE,STATUS='UNKNOWN',FORM='FORMATTED')
+            END IF
+            WRITE(14,100) '# Object: '
+            IF(LEXTERNAL)THEN
+              L2=TRUELEN(OBJNAME(NCURRENT_OBJECT))
+              IF(L2.GT.0)THEN
+                L1=TRUEBEG(OBJNAME(NCURRENT_OBJECT))
+                WRITE(14,101) '<'//OBJNAME(NCURRENT_OBJECT)(L1:L2)//'>'
+              ELSE
+                WRITE(14,101) '<UNKNOWN>'
+              END IF
             ELSE
               WRITE(14,101) '<UNKNOWN>'
             END IF
-          ELSE
-            WRITE(14,101) '<UNKNOWN>'
+            WRITE(14,100) '# Model: '
+            L1=TRUEBEG(CMODELNAME)
+            L2=TRUELEN(CMODELNAME)
+            WRITE(14,101) CMODELNAME(L1:L2)
+            WRITE(14,100) '# X-axis: '
+            L1=TRUEBEG(CLABEL(1))
+            L2=TRUELEN(CLABEL(1))
+            WRITE(14,101) CLABEL(1)(L1:L2)
+            WRITE(14,100) '# Y-axis: '
+            L1=TRUEBEG(CLABEL(2))
+            L2=TRUELEN(CLABEL(2))
+            WRITE(14,101) CLABEL(2)(L1:L2)
+            WRITE(14,100) '# Param1: '
+            L1=TRUEBEG(CPARAMETER(NPARAM(1)))
+            L2=TRUELEN(CPARAMETER(NPARAM(1)))
+            WRITE(14,101) CPARAMETER(NPARAM(1))(L1:L2)
+            WRITE(14,100) '# Param2: '
+            L1=TRUEBEG(CPARAMETER(NPARAM(2)))
+            L2=TRUELEN(CPARAMETER(NPARAM(2)))
+            WRITE(14,101) CPARAMETER(NPARAM(2))(L1:L2)
+            WRITE(14,101) '#Param2        Param1'
+            WRITE(14,*) FPAR2_FIT,FPAR1_FIT
           END IF
-          WRITE(14,100) '# Model: '
-          L1=TRUEBEG(CMODELNAME)
-          L2=TRUELEN(CMODELNAME)
-          WRITE(14,101) CMODELNAME(L1:L2)
-          WRITE(14,100) '# X-axis: '
-          L1=TRUEBEG(CLABEL(1))
-          L2=TRUELEN(CLABEL(1))
-          WRITE(14,101) CLABEL(1)(L1:L2)
-          WRITE(14,100) '# Y-axis: '
-          L1=TRUEBEG(CLABEL(2))
-          L2=TRUELEN(CLABEL(2))
-          WRITE(14,101) CLABEL(2)(L1:L2)
-          WRITE(14,100) '# Param1: '
-          L1=TRUEBEG(CPARAMETER(NPARAM(1)))
-          L2=TRUELEN(CPARAMETER(NPARAM(1)))
-          WRITE(14,101) CPARAMETER(NPARAM(1))(L1:L2)
-          WRITE(14,100) '# Param2: '
-          L1=TRUEBEG(CPARAMETER(NPARAM(2)))
-          L2=TRUELEN(CPARAMETER(NPARAM(2)))
-          WRITE(14,101) CPARAMETER(NPARAM(2))(L1:L2)
-          WRITE(14,101) '#Param2        Param1'
-          WRITE(14,*) FPAR2_FIT,FPAR1_FIT
           CALL PGSCI(14)
           DO K=1,NSIMUL
             R1=RANRED(NSEED)
@@ -2017,15 +2069,15 @@ ccc92      IF(CCHAR.EQ.'?')THEN
               IF(ISIGMA.EQ.1)THEN
                 CALL FMAP(2,AIJ,BIJ,INDEX_X+ERRIX,INDEX_Y+ERRIY,
      +           FPAR2_SIMUL1S(K),FPAR1_SIMUL1S(K))
-                 WRITE(14,*) FPAR2_SIMUL1S(K),FPAR1_SIMUL1S(K)
+                IF(L14) WRITE(14,*) FPAR2_SIMUL1S(K),FPAR1_SIMUL1S(K)
               ELSEIF(ISIGMA.EQ.2)THEN
                 CALL FMAP(2,AIJ,BIJ,INDEX_X+ERRIX,INDEX_Y+ERRIY,
      +           FPAR2_SIMUL2S(K),FPAR1_SIMUL2S(K))
-                 WRITE(14,*) FPAR2_SIMUL2S(K),FPAR1_SIMUL2S(K)
+                IF(L14) WRITE(14,*) FPAR2_SIMUL2S(K),FPAR1_SIMUL2S(K)
               ELSE
                 CALL FMAP(2,AIJ,BIJ,INDEX_X+ERRIX,INDEX_Y+ERRIY,
      +           FPAR2_SIMUL3S(K),FPAR1_SIMUL3S(K))
-                 WRITE(14,*) FPAR2_SIMUL3S(K),FPAR1_SIMUL3S(K)
+                IF(L14) WRITE(14,*) FPAR2_SIMUL3S(K),FPAR1_SIMUL3S(K)
               END IF
               IF(K.EQ.0)THEN
                 CALL PGMOVE(INDEX_X+ERRIX,INDEX_Y+ERRIY)
@@ -2035,7 +2087,7 @@ ccc92      IF(CCHAR.EQ.'?')THEN
             END DO
           END DO
           CALL PGSCI(1)
-          CLOSE(14)
+          IF(L14) CLOSE(14)
           !plot param1 vs. param2
           XMIN_=FPAR2_SIMUL(1)
           XMAX_=XMIN_
@@ -2450,4 +2502,7 @@ C------------------------------------------------------------------------------
 101     FORMAT(A)
 111     FORMAT(I12,1X,A)
 112     FORMAT(11X,A1,1X,A)
+201     FORMAT(79('='))
+202     FORMAT(79('-'))
+203     FORMAT(79('*'))
         END

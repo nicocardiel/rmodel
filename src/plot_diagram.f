@@ -106,6 +106,7 @@ C Calculamos limites del diagrama
 C------------------------------------------------------------------------------
 C Dibujamos diagrama
         CALL PGENV(0.,1.,0.,1.,1,-2)
+        CALL PGSCI(1)
         IF(LREV(1).AND.LREV(2))THEN
           CALL PGSWIN(XMAX,XMIN,YMAX,YMIN)
         ELSEIF(LREV(1))THEN
