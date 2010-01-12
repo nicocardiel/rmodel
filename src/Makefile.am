@@ -4,6 +4,7 @@ bin_PROGRAMS = rmodel
 rmodel_SOURCES = binsearch.f \
 cextrae.f \
 chequea_area.f \
+cleantab.f \
 dimensions.inc \
 downhill.f \
 fextrae.f \

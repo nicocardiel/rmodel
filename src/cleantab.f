@@ -1,5 +1,5 @@
 C------------------------------------------------------------------------------
-C Copyright 2008 Nicolas Cardiel
+C Copyright 2009 Nicolas Cardiel
 C
 C This file is part of rmodel.
 C 
@@ -16,25 +16,16 @@ C
 C You should have received a copy of the GNU General Public License
 C along with rmodel. If not, see <http://www.gnu.org/licenses/>.
 C------------------------------------------------------------------------------
-        INTEGER NMAX_MODELS
-        PARAMETER (NMAX_MODELS=5)
-        INTEGER NMAX_MODELS_MILES
-        PARAMETER (NMAX_MODELS_MILES=1)
-        INTEGER NMAX_PARAMETERS
-        PARAMETER (NMAX_PARAMETERS=10)
-        INTEGER NMAX_LEN_PARAMETER
-        PARAMETER (NMAX_LEN_PARAMETER=100)
-        INTEGER NMAX_INDICES
-        PARAMETER (NMAX_INDICES=100)
-        INTEGER NBUFF_COMP_INDEX
-        PARAMETER (NBUFF_COMP_INDEX=10)
-        INTEGER NMAX_LEN_BUFFER
-        PARAMETER (NMAX_LEN_BUFFER=10000)
-        INTEGER NPMAX
-        PARAMETER (NPMAX=1000)
-        INTEGER NSIMULMAX
-        PARAMETER (NSIMULMAX=1000000)
-        INTEGER NPOINTSELLIPSE
-        PARAMETER (NPOINTSELLIPSE=500)
-        INTEGER NMAX_OBJECTS
-        PARAMETER (NMAX_OBJECTS=1000)
+        SUBROUTINE CLEANTAB(CADENA)
+        IMPLICIT NONE
+        CHARACTER*(*) CADENA
+C
+        INTEGER TRUELEN
+C
+        INTEGER L
+C------------------------------------------------------------------------------
+        DO L=1,TRUELEN(CADENA)
+          IF(CADENA(L:L).EQ.CHAR(9)) CADENA(L:L)=' '
+        END DO
+C
+        END
