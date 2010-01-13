@@ -24,6 +24,8 @@ C
 C
         INTEGER L
 C------------------------------------------------------------------------------
+        IF(TRUELEN(CADENA).EQ.0) RETURN
+C
         DO L=1,TRUELEN(CADENA)
           IF(CADENA(L:L).EQ.CHAR(9)) CADENA(L:L)=' '
         END DO

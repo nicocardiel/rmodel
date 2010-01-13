@@ -70,7 +70,10 @@ C------------------------------------------------------------------------------
             WRITE(*,101) 'column #11: FJUST for label'
             WRITE(*,101) 'column #12: PGPLOT font size for label'
             WRITE(*,101) 'column #13: object label'//
-     +       ' (without white spaces)'
+     +       ' (without blank spaces)'
+            WRITE(*,101)
+            WRITE(*,101) 'NOTE: lines starting by # will be ignored'
+            WRITE(*,101)
             OBJ_INFILE=READC(IDLOG,'File name (NONE=ignore)',
      +       'NONE','@')
             L1=TRUEBEG(OBJ_INFILE)
@@ -96,6 +99,9 @@ C------------------------------------------------------------------------------
         L2=TRUELEN(OBJ_INFILE)
         OPEN(22,FILE=OBJ_INFILE(L1:L2),STATUS='OLD',FORM='FORMATTED')
 10      READ(22,101,END=20) CLINEA
+        IF(TRUELEN(CLINEA).EQ.0) GOTO 10 !saltamos líneas en blanco
+        CALL CLEANTAB(CLINEA) !limpiamos posibles tabuladores
+        IF(CLINEA(1:1).EQ.'#') GOTO 10
         K=K+1
         !valores por defecto
         ISYMBOL=17
