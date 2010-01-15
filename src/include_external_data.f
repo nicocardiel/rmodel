@@ -81,6 +81,7 @@ C------------------------------------------------------------------------------
             IF(OBJ_INFILE(L1:L2).EQ.'NONE')THEN
               CALL TOLOG77_STRING(OBJ_INFILE(L1:L2),
      +         'external ASCII file with data')
+              NOBJPLOT=0
               RETURN
             END IF
             INQUIRE(FILE=OBJ_INFILE(L1:L2),EXIST=LOGFILE)

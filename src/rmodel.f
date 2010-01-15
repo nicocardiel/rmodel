@@ -1025,6 +1025,7 @@ C..............................................................................
         ELSEIF((CCHAR.EQ.'i').OR.(CCHAR.EQ.'I'))THEN
           CALL PLOT_DIAGRAM(IDLOG)
           CALL INCLUDE_EXTERNAL_DATA(IDLOG,0)
+          IF(NOBJPLOT.EQ.0) GOTO 90
 C..............................................................................
         ELSEIF(CCHAR.EQ.'1')THEN
           IF(LABPAR(1))THEN
@@ -1109,19 +1110,19 @@ C vamos a simular que elegimos la opcion '?' para cada objeto
           DO I=1,255
             CLINEA39(I:I)=' ' !linea en la que almacenamos los resultados
           END DO
-          CPAUSE(1:1)=READC(IDLOG,'Pause between plots (y/n) ',CPAUSE,
-     +     'yn')
+          CPAUSE(1:1)=READC(IDLOG,
+     +     'Pause between plots (y/n/k=skip plots) ',CPAUSE,'ynk')
           WRITE(77,112) CPAUSE,'# pause between plots?'
           LEXTERNAL=.TRUE.
           CCHAR='?'
-          CALL PGSUBP(2,1)
+          IF(CPAUSE.NE.'k') CALL PGSUBP(2,1)
         ELSE
           LEXTERNAL=.FALSE.
         END IF
 C..............................................................................
 C si es un punto, lo introducimos y buscamos lineas isoparametricas para el
 C mejor ajuste
-91      CALL PLOT_DIAGRAM(IDLOG)
+91      IF(CPAUSE.NE.'k') CALL PLOT_DIAGRAM(IDLOG)
         IF(CCHAR.EQ.'?')THEN
           OBJSTATUS=0 !salvo que se demuestre lo contrario
           !pedimos el punto con su correspondiente error
@@ -1145,13 +1146,15 @@ C mejor ajuste
             WRITE(77,*) EINDEX_Y,'# error in Y index'
           END IF
           !dibujamos el punto
-          CALL PGSCI(5)
-          CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
-          CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
-          CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
-          CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
-          CALL PGERR1(4,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
-          CALL PGSCI(1)
+          IF(CPAUSE.NE.'k')THEN
+            CALL PGSCI(5)
+            CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
+            CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
+            CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
+            CALL PGERR1(4,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
+            CALL PGSCI(1)
+          END IF
           !determinamos metodo para buscar punto mas proximo en los modelos
           IF(NCURRENT_OBJECT.EQ.1)THEN
             WRITE(*,101) '(1) use closest point'
@@ -1201,16 +1204,20 @@ C mejor ajuste
                     WRITE(*,*) IBEST
                     STOP
                   END IF
-                  CALL PGSCI(3)
+                  IF(CPAUSE.NE.'k') CALL PGSCI(3)
                 ELSE
-                  CALL PGSCI(4)
+                  IF(CPAUSE.NE.'k') CALL PGSCI(4)
                 END IF
-                CALL PGMOVE(ARRAY1(IPAR1,IPAR2),ARRAY2(IPAR1,IPAR2))
-                CALL PGDRAW(ARRAY1(IPAR1,IPAR2+1),ARRAY2(IPAR1,IPAR2+1))
-                CALL PGDRAW(ARRAY1(IPAR1+1,IPAR2+1),
-     +           ARRAY2(IPAR1+1,IPAR2+1))
-                CALL PGDRAW(ARRAY1(IPAR1+1,IPAR2),ARRAY2(IPAR1+1,IPAR2))
-                CALL PGDRAW(ARRAY1(IPAR1,IPAR2),ARRAY2(IPAR1,IPAR2))
+                IF(CPAUSE.NE.'k')THEN
+                  CALL PGMOVE(ARRAY1(IPAR1,IPAR2),ARRAY2(IPAR1,IPAR2))
+                  CALL PGDRAW(ARRAY1(IPAR1,IPAR2+1),
+     +             ARRAY2(IPAR1,IPAR2+1))
+                  CALL PGDRAW(ARRAY1(IPAR1+1,IPAR2+1),
+     +             ARRAY2(IPAR1+1,IPAR2+1))
+                  CALL PGDRAW(ARRAY1(IPAR1+1,IPAR2),
+     +             ARRAY2(IPAR1+1,IPAR2))
+                  CALL PGDRAW(ARRAY1(IPAR1,IPAR2),ARRAY2(IPAR1,IPAR2))
+                END IF
               END DO
             END DO
           END IF
@@ -1268,9 +1275,11 @@ C mejor ajuste
         !determina el punto de cruce
         INDX0=ARRAY1(IPAR1_MIN,IPAR2_MIN)
         INDY0=ARRAY2(IPAR1_MIN,IPAR2_MIN)
-        CALL PGSCI(5)
-        CALL PGPOINT(1,INDX0,INDY0,17)
-        CALL PGSCI(1)
+        IF(CPAUSE.NE.'k')THEN
+          CALL PGSCI(5)
+          CALL PGPOINT(1,INDX0,INDY0,17)
+          CALL PGSCI(1)
+        END IF
         IF(CCHAR.NE.'?')THEN
           INDEX_X=INDX0
           INDEX_Y=INDY0
@@ -1331,7 +1340,8 @@ C compute local linear transformation
         X0=X1(II)-A11*W1(II)-A12*W2(JJ)
         Y0=Y1(II)-A21*W1(II)-A22*W2(JJ)
 c plot local linear approximation (solo si no estamos en opcion 'C')
-        IF((CCHAR.EQ.'S').OR.(CCHAR.EQ.'s').OR.(CCHAR.EQ.'?'))THEN
+        IF(((CCHAR.EQ.'S').OR.(CCHAR.EQ.'s').OR.(CCHAR.EQ.'?')).AND.
+     +   (CPAUSE.NE.'k'))THEN
           CALL PGSCI(7)
           IF((II.LT.N1).AND.(JJ.LT.N2))THEN
             XX=A11*W1(II)+A12*W2(JJ)+X0
@@ -1763,7 +1773,8 @@ C el punto del grid del modelo mas proximo)
         WRITE(*,100) 'Suitability index kappa, log10(kappa): '
         WRITE(*,*) FAREA,ALOG10(FAREA)
 C dibujamos el resultado (solo si no hacemos estamos en la opcion 'C')
-        IF((CCHAR.EQ.'S').OR.(CCHAR.EQ.'s').OR.(CCHAR.EQ.'?'))THEN
+        IF(((CCHAR.EQ.'S').OR.(CCHAR.EQ.'s').OR.(CCHAR.EQ.'?')).AND.
+     +   (CPAUSE.NE.'k'))THEN
           CALL PGSCI(6)
           CALL PGSLW(3)
           !---
@@ -1967,7 +1978,9 @@ ccc92      IF(CCHAR.EQ.'?')THEN
             NSIMUL=READILIM(IDLOG,'No. of simulations, 0=none',CDUMMY,
      +       0,NSIMULMAX)
             WRITE(77,111) NSIMUL,'# no. of simulations'
-            IF(NSIMUL.EQ.0) GOTO 90
+            IF(NSIMUL.EQ.0)THEN
+              GOTO 95
+            END IF
             IF(NSEED.EQ.-1)THEN
               NSEED=READI(IDLOG,'NSEED for random numbers','-1')
               WRITE(77,111) NSEED,'# NSEED for random numbers'
@@ -1983,25 +1996,30 @@ ccc92      IF(CCHAR.EQ.'?')THEN
      +       'by 361 pairs of points, from angle 0'
             WRITE(*,101) '      to 360---). All these data points'//
      +       ' are contiguous in the same output file.'
-            COUTFILE=READC(IDLOG,'Output file name (none=no output)',
+            COUTFILE=READC(IDLOG,'Output file name (NONE=no output)',
      +       'rmodel_simul.out','@')
             L1=TRUEBEG(COUTFILE)
             L2=TRUELEN(COUTFILE)
             CALL TOLOG77_STRING(COUTFILE(L1:L2),
      +       'output file for simulations')
-            IF(COUTFILE.EQ.'none')THEN
+            IF(COUTFILE.EQ.'NONE')THEN
               L14=.FALSE.
             ELSE
               L14=.TRUE.
             END IF
+          ELSE
+            IF(NSIMUL.EQ.0)THEN
+              GOTO 95
+            END IF
           END IF
+C
           IF(L14)THEN
             IF(LEXTERNAL)THEN
               WRITE(CDUMMY(1:8),'(A4,I4.4)') '_obj',NCURRENT_OBJECT
               L1=TRUEBEG(COUTFILE)
               L2=TRUELEN(COUTFILE)
-            OPEN(14,FILE=COUTFILE(L1:L2)//CDUMMY(1:8),STATUS='UNKNOWN',
-     +         FORM='FORMATTED')
+              OPEN(14,FILE=COUTFILE(L1:L2)//CDUMMY(1:8),
+     +         STATUS='UNKNOWN',FORM='FORMATTED')
             ELSE
               OPEN(14,FILE=COUTFILE,STATUS='UNKNOWN',FORM='FORMATTED')
             END IF
@@ -2040,7 +2058,7 @@ ccc92      IF(CCHAR.EQ.'?')THEN
             WRITE(14,101) '#Param2        Param1'
             WRITE(14,*) FPAR2_FIT,FPAR1_FIT
           END IF
-          CALL PGSCI(14)
+          IF(CPAUSE.NE.'k') CALL PGSCI(14)
           DO K=1,NSIMUL
             R1=RANRED(NSEED)
             R2=RANRED(NSEED)*6.283185307
@@ -2048,20 +2066,24 @@ ccc92      IF(CCHAR.EQ.'?')THEN
             R1=RANRED(NSEED)
             R2=RANRED(NSEED)*6.283185307
             ERRIY=1.4142136*EINDEX_Y*SQRT(-ALOG(1.-R1))*COS(R2)
-            CALL PGPOINT(1,INDEX_X+ERRIX,INDEX_Y+ERRIY,1)
+            IF(CPAUSE.NE.'k')THEN
+              CALL PGPOINT(1,INDEX_X+ERRIX,INDEX_Y+ERRIY,1)
+            END IF
             !calculamos edad y metalicidad del nuevo punto usando la
             !transformacion cuadratica
             CALL FMAP(2,AIJ,BIJ,INDEX_X+ERRIX,INDEX_Y+ERRIY,
      +       FPAR2_SIMUL(K),FPAR1_SIMUL(K))
           END DO
-          CALL PGSCI(5)
-          CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
-          CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
-          CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
-          CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
-          CALL PGERR1(4,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
+          IF(CPAUSE.NE.'k')THEN
+            CALL PGSCI(5)
+            CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
+            CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
+            CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
+            CALL PGERR1(4,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
+          END IF
           !recorremos las elipses de 1, 2 y 3 sigma
-          CALL PGSCI(4)
+          IF(CPAUSE.NE.'k') CALL PGSCI(4)
           DO ISIGMA=1,3
             DO K=0,360 !grados
               ERRIX=REAL(ISIGMA)*EINDEX_X*COS(REAL(K)*1.74532925E-2)
@@ -2079,149 +2101,153 @@ ccc92      IF(CCHAR.EQ.'?')THEN
      +           FPAR2_SIMUL3S(K),FPAR1_SIMUL3S(K))
                 IF(L14) WRITE(14,*) FPAR2_SIMUL3S(K),FPAR1_SIMUL3S(K)
               END IF
-              IF(K.EQ.0)THEN
-                CALL PGMOVE(INDEX_X+ERRIX,INDEX_Y+ERRIY)
-              ELSE
-                CALL PGDRAW(INDEX_X+ERRIX,INDEX_Y+ERRIY)
+              IF(CPAUSE.NE.'k')THEN
+                IF(K.EQ.0)THEN
+                  CALL PGMOVE(INDEX_X+ERRIX,INDEX_Y+ERRIY)
+                ELSE
+                  CALL PGDRAW(INDEX_X+ERRIX,INDEX_Y+ERRIY)
+                END IF
               END IF
             END DO
           END DO
-          CALL PGSCI(1)
+          IF(CPAUSE.NE.'k') CALL PGSCI(1)
           IF(L14) CLOSE(14)
           !plot param1 vs. param2
-          XMIN_=FPAR2_SIMUL(1)
-          XMAX_=XMIN_
-          YMIN_=FPAR1_SIMUL(1)
-          YMAX_=YMIN_
-          DO K=1,NSIMUL
-            XMIN_=AMIN1(XMIN_,FPAR2_SIMUL(K))
-            XMAX_=AMAX1(XMAX_,FPAR2_SIMUL(K))
-            YMIN_=AMIN1(YMIN_,FPAR1_SIMUL(K))
-            YMAX_=AMAX1(YMAX_,FPAR1_SIMUL(K))
-          END DO
-          DX_=XMAX_-XMIN_
-          IF(DX_.GT.0.0)THEN
-            XMIN_=XMIN_-DX_/20.
-            XMAX_=XMAX_+DX_/20.
-          ELSE
-            XMIN_=FPAR2_SIMUL(1)-0.5
-            XMAX_=FPAR2_SIMUL(1)+0.5
-          END IF
-          DY_=YMAX_-YMIN_
-          IF(DY_.GT.0.0)THEN
-            YMIN_=YMIN_-DY_/20.
-            YMAX_=YMAX_+DY_/20.
-          ELSE
-            YMIN_=FPAR1_SIMUL(1)-0.5
-            YMAX_=FPAR1_SIMUL(1)+0.5
-          END IF
-          CALL PGENV(XMIN_,XMAX_,YMIN_,YMAX_,0,0)
-          CALL PGSCI(14)
-          CALL PGPOINT(NSIMUL,FPAR2_SIMUL,FPAR1_SIMUL,1)
-          CALL PGSCI(5)
-          CALL PGPOINT(1,FPAR2_FIT,FPAR1_FIT,17)
-          DO I=1,NPMAX
-            XX=INDEX_X+REAL(I-1)/REAL(NPMAX-1)*EINDEX_X
-            CALL FMAP(2,AIJ,BIJ,XX,INDEX_Y,FPAR2_P,FPAR1_P)
-            IF(I.EQ.1)THEN
-              CALL PGMOVE(FPAR2_P,FPAR1_P)
+          IF(CPAUSE.NE.'k')THEN
+            XMIN_=FPAR2_SIMUL(1)
+            XMAX_=XMIN_
+            YMIN_=FPAR1_SIMUL(1)
+            YMAX_=YMIN_
+            DO K=1,NSIMUL
+              XMIN_=AMIN1(XMIN_,FPAR2_SIMUL(K))
+              XMAX_=AMAX1(XMAX_,FPAR2_SIMUL(K))
+              YMIN_=AMIN1(YMIN_,FPAR1_SIMUL(K))
+              YMAX_=AMAX1(YMAX_,FPAR1_SIMUL(K))
+            END DO
+            DX_=XMAX_-XMIN_
+            IF(DX_.GT.0.0)THEN
+              XMIN_=XMIN_-DX_/20.
+              XMAX_=XMAX_+DX_/20.
             ELSE
-              CALL PGDRAW(FPAR2_P,FPAR1_P)
+              XMIN_=FPAR2_SIMUL(1)-0.5
+              XMAX_=FPAR2_SIMUL(1)+0.5
             END IF
-          END DO
-          DO I=1,NPMAX
-            XX=INDEX_X-REAL(I-1)/REAL(NPMAX-1)*EINDEX_X
-            CALL FMAP(2,AIJ,BIJ,XX,INDEX_Y,FPAR2_P,FPAR1_P)
-            IF(I.EQ.1)THEN
-              CALL PGMOVE(FPAR2_P,FPAR1_P)
+            DY_=YMAX_-YMIN_
+            IF(DY_.GT.0.0)THEN
+              YMIN_=YMIN_-DY_/20.
+              YMAX_=YMAX_+DY_/20.
             ELSE
-              CALL PGDRAW(FPAR2_P,FPAR1_P)
+              YMIN_=FPAR1_SIMUL(1)-0.5
+              YMAX_=FPAR1_SIMUL(1)+0.5
             END IF
-          END DO
-          DO I=1,NPMAX
-            YY=INDEX_Y+REAL(I-1)/REAL(NPMAX-1)*EINDEX_Y
-            CALL FMAP(2,AIJ,BIJ,INDEX_X,YY,FPAR2_P,FPAR1_P)
-            IF(I.EQ.1)THEN
-              CALL PGMOVE(FPAR2_P,FPAR1_P)
-            ELSE
-              CALL PGDRAW(FPAR2_P,FPAR1_P)
-            END IF
-          END DO
-          DO I=1,NPMAX
-            YY=INDEX_Y-REAL(I-1)/REAL(NPMAX-1)*EINDEX_Y
-            CALL FMAP(2,AIJ,BIJ,INDEX_X,YY,FPAR2_P,FPAR1_P)
-            IF(I.EQ.1)THEN
-              CALL PGMOVE(FPAR2_P,FPAR1_P)
-            ELSE
-              CALL PGDRAW(FPAR2_P,FPAR1_P)
-            END IF
-          END DO
-          CALL PGSCI(4)
-          CALL PGLINE(361,FPAR2_SIMUL1S(0),FPAR1_SIMUL1S(0))
-          CALL PGLINE(361,FPAR2_SIMUL2S(0),FPAR1_SIMUL2S(0))
-          CALL PGLINE(361,FPAR2_SIMUL3S(0),FPAR1_SIMUL3S(0))
-          CALL PGSCI(1)
-          CALL PGLABEL(CPARAMETER(NPARAM(2)),CPARAMETER(NPARAM(1)),
-     +     CMODELNAME)
+            CALL PGENV(XMIN_,XMAX_,YMIN_,YMAX_,0,0)
+            CALL PGSCI(14)
+            CALL PGPOINT(NSIMUL,FPAR2_SIMUL,FPAR1_SIMUL,1)
+            CALL PGSCI(5)
+            CALL PGPOINT(1,FPAR2_FIT,FPAR1_FIT,17)
+            DO I=1,NPMAX
+              XX=INDEX_X+REAL(I-1)/REAL(NPMAX-1)*EINDEX_X
+              CALL FMAP(2,AIJ,BIJ,XX,INDEX_Y,FPAR2_P,FPAR1_P)
+              IF(I.EQ.1)THEN
+                CALL PGMOVE(FPAR2_P,FPAR1_P)
+              ELSE
+                CALL PGDRAW(FPAR2_P,FPAR1_P)
+              END IF
+            END DO
+            DO I=1,NPMAX
+              XX=INDEX_X-REAL(I-1)/REAL(NPMAX-1)*EINDEX_X
+              CALL FMAP(2,AIJ,BIJ,XX,INDEX_Y,FPAR2_P,FPAR1_P)
+              IF(I.EQ.1)THEN
+                CALL PGMOVE(FPAR2_P,FPAR1_P)
+              ELSE
+                CALL PGDRAW(FPAR2_P,FPAR1_P)
+              END IF
+            END DO
+            DO I=1,NPMAX
+              YY=INDEX_Y+REAL(I-1)/REAL(NPMAX-1)*EINDEX_Y
+              CALL FMAP(2,AIJ,BIJ,INDEX_X,YY,FPAR2_P,FPAR1_P)
+              IF(I.EQ.1)THEN
+                CALL PGMOVE(FPAR2_P,FPAR1_P)
+              ELSE
+                CALL PGDRAW(FPAR2_P,FPAR1_P)
+              END IF
+            END DO
+            DO I=1,NPMAX
+              YY=INDEX_Y-REAL(I-1)/REAL(NPMAX-1)*EINDEX_Y
+              CALL FMAP(2,AIJ,BIJ,INDEX_X,YY,FPAR2_P,FPAR1_P)
+              IF(I.EQ.1)THEN
+                CALL PGMOVE(FPAR2_P,FPAR1_P)
+              ELSE
+                CALL PGDRAW(FPAR2_P,FPAR1_P)
+              END IF
+            END DO
+            CALL PGSCI(4)
+            CALL PGLINE(361,FPAR2_SIMUL1S(0),FPAR1_SIMUL1S(0))
+            CALL PGLINE(361,FPAR2_SIMUL2S(0),FPAR1_SIMUL2S(0))
+            CALL PGLINE(361,FPAR2_SIMUL3S(0),FPAR1_SIMUL3S(0))
+            CALL PGSCI(1)
+            CALL PGLABEL(CPARAMETER(NPARAM(2)),CPARAMETER(NPARAM(1)),
+     +       CMODELNAME)
 c lineas del ajuste bivariado (rectas en esta representacion!)
-          CALL PGSCI(6)
-          IF(J0-1.GE.1)THEN
-            XPARAM_MIN=XPARAMETER(J0-1,NPARAM(2))
-          ELSE
-            XPARAM_MIN=XPARAMETER(J0,NPARAM(2))
-          END IF
-          IF(J0+1.LE.LEN_PARAMETER(NPARAM(2)))THEN
-            XPARAM_MAX=XPARAMETER(J0+1,NPARAM(2))
-          ELSE
-            XPARAM_MAX=XPARAMETER(J0,NPARAM(2))
-          END IF
-          IF(I0-1.GE.1)THEN
-            VV=XPARAMETER(I0-1,NPARAM(1))
+            CALL PGSCI(6)
+            IF(J0-1.GE.1)THEN
+              XPARAM_MIN=XPARAMETER(J0-1,NPARAM(2))
+            ELSE
+              XPARAM_MIN=XPARAMETER(J0,NPARAM(2))
+            END IF
+            IF(J0+1.LE.LEN_PARAMETER(NPARAM(2)))THEN
+              XPARAM_MAX=XPARAMETER(J0+1,NPARAM(2))
+            ELSE
+              XPARAM_MAX=XPARAMETER(J0,NPARAM(2))
+            END IF
+            IF(I0-1.GE.1)THEN
+              VV=XPARAMETER(I0-1,NPARAM(1))
+              CALL PGMOVE(XPARAM_MIN,VV)
+              CALL PGDRAW(XPARAM_MAX,VV)
+            END IF
+            !---
+            VV=XPARAMETER(I0,NPARAM(1))
             CALL PGMOVE(XPARAM_MIN,VV)
             CALL PGDRAW(XPARAM_MAX,VV)
-          END IF
-          !---
-          VV=XPARAMETER(I0,NPARAM(1))
-          CALL PGMOVE(XPARAM_MIN,VV)
-          CALL PGDRAW(XPARAM_MAX,VV)
-          !---
-          IF(I0+1.LE.LEN_PARAMETER(NPARAM(1)))THEN
-            VV=XPARAMETER(I0+1,NPARAM(1))
-            CALL PGMOVE(XPARAM_MIN,VV)
-            CALL PGDRAW(XPARAM_MAX,VV)
-          END IF
-          !---
-          IF(I0-1.GE.1)THEN
-            XPARAM_MIN=XPARAMETER(I0-1,NPARAM(1))
-          ELSE
-            XPARAM_MIN=XPARAMETER(I0,NPARAM(1))
-          END IF
-          IF(I0+1.LE.LEN_PARAMETER(NPARAM(1)))THEN
-            XPARAM_MAX=XPARAMETER(I0+1,NPARAM(1))
-          ELSE
-            XPARAM_MAX=XPARAMETER(I0,NPARAM(1))
-          END IF
-          IF(J0-1.GE.1)THEN
-            UU=XPARAMETER(J0-1,NPARAM(2))
+            !---
+            IF(I0+1.LE.LEN_PARAMETER(NPARAM(1)))THEN
+              VV=XPARAMETER(I0+1,NPARAM(1))
+              CALL PGMOVE(XPARAM_MIN,VV)
+              CALL PGDRAW(XPARAM_MAX,VV)
+            END IF
+            !---
+            IF(I0-1.GE.1)THEN
+              XPARAM_MIN=XPARAMETER(I0-1,NPARAM(1))
+            ELSE
+              XPARAM_MIN=XPARAMETER(I0,NPARAM(1))
+            END IF
+            IF(I0+1.LE.LEN_PARAMETER(NPARAM(1)))THEN
+              XPARAM_MAX=XPARAMETER(I0+1,NPARAM(1))
+            ELSE
+              XPARAM_MAX=XPARAMETER(I0,NPARAM(1))
+            END IF
+            IF(J0-1.GE.1)THEN
+              UU=XPARAMETER(J0-1,NPARAM(2))
+              CALL PGMOVE(UU,XPARAM_MIN)
+              CALL PGDRAW(UU,XPARAM_MAX)
+            END IF
+            !---
+            UU=XPARAMETER(J0,NPARAM(2))
             CALL PGMOVE(UU,XPARAM_MIN)
             CALL PGDRAW(UU,XPARAM_MAX)
-          END IF
-          !---
-          UU=XPARAMETER(J0,NPARAM(2))
-          CALL PGMOVE(UU,XPARAM_MIN)
-          CALL PGDRAW(UU,XPARAM_MAX)
-          !---
-          IF(J0+1.LE.LEN_PARAMETER(NPARAM(2)))THEN
-            UU=XPARAMETER(J0+1,NPARAM(2))
-            CALL PGMOVE(UU,XPARAM_MIN)
-            CALL PGDRAW(UU,XPARAM_MAX)
-          END IF
-          CALL PGSCI(1)
+            !---
+            IF(J0+1.LE.LEN_PARAMETER(NPARAM(2)))THEN
+              UU=XPARAMETER(J0+1,NPARAM(2))
+              CALL PGMOVE(UU,XPARAM_MIN)
+              CALL PGDRAW(UU,XPARAM_MAX)
+            END IF
+            CALL PGSCI(1)
 C
-          IF(.NOT.LEXTERNAL) CALL PGSUBP(1,1)
+            IF(.NOT.LEXTERNAL) CALL PGSUBP(1,1)
+          END IF
         END IF
 C..............................................................................
-        IF(LEXTERNAL)THEN
+95      IF(LEXTERNAL)THEN
           IF(CPAUSE.EQ.'y')THEN
             WRITE(*,100) 'Press <RETURN> to continue...'
             IF(IDLOG.EQ.0)THEN
@@ -2246,9 +2272,12 @@ C..............................................................................
      +       '_xxx | column -t > '//CRESULTSFILE(L1:L2))
             ISYSTEM=SYSTEMFUNCTION('rm -f '//
      +       CRESULTSFILE(L1:L2)//'_xxx')
-            CALL PGSUBP(1,1)
-            CALL PLOT_DIAGRAM(IDLOG)
+            IF(CPAUSE.NE.'k')THEN
+              CALL PGSUBP(1,1)
+              CALL PLOT_DIAGRAM(IDLOG)
+            END IF
             CALL INCLUDE_EXTERNAL_DATA(IDLOG,1)
+            IF(CPAUSE.EQ.'k') CPAUSE='y'
             GOTO 90
           ELSE
             GOTO 91
