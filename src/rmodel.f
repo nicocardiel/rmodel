@@ -441,9 +441,33 @@ C..............................................................................
             END IF
           END IF
           IF((NMODEL.EQ.0).AND.(.NOT.LMODEL_USER))THEN
-            WRITE(*,100) '**ERROR** Press <CR> to continue...'
-            READ(*,*)
-            GOTO 10
+            MODELFILE(0)=READC(IDLOG,
+     +       'Filename of model data (without extension)','@','@')
+            L1=TRUEBEG(MODELFILE(0))
+            L2=TRUELEN(MODELFILE(0))
+            DEFMODELFILE(0)=MODELFILE(0)(L1:L2)//'.def'
+            DATMODELFILE(0)=MODELFILE(0)(L1:L2)//'.dat'
+            EXTMODELFILE(0)=MODELFILE(0)(L1:L2)//'.ext'
+            INQUIRE(FILE=DEFMODELFILE(0),EXIST=LOGFILE)
+            IF(LOGFILE)THEN
+              OPEN(10,FILE=DEFMODELFILE(0),STATUS='OLD',
+     +         FORM='FORMATTED')
+              READ(10,101) CMODEL(0)
+              CMODEL(0)=CMODEL(0)(3:)
+              CLOSE(10)
+              WRITE(*,101)
+              WRITE(*,100) '>>> Model description: '
+              L1=TRUEBEG(CMODEL(0))
+              L2=TRUELEN(CMODEL(0))
+              WRITE(*,101) CMODEL(0)(L1:L2)
+            ELSE
+              WRITE(*,101) 'ERROR: the following file does not exist:'
+              L1=TRUEBEG(DEFMODELFILE(0))
+              L2=TRUELEN(DEFMODELFILE(0))
+              WRITE(*,101) DEFMODELFILE(0)(L1:L2)
+              READ(*,*)
+              GOTO 10
+            END IF
           END IF
         ELSE
           WRITE(*,100) '**ERROR** Press <CR> to continue...'
@@ -459,6 +483,11 @@ C
           END DO
         END IF
         WRITE(77,101) COPC(1:L)//' # Model number'
+        IF((NMODEL.EQ.0).AND.(.NOT.LMODEL_USER))THEN
+          L1=TRUEBEG(MODELFILE(0))
+          L2=TRUELEN(MODELFILE(0))
+          WRITE(77,101) MODELFILE(0)(L1:L2)//' # Filename of model data'
+        END IF
         IF(NMODEL.GT.100) NMODEL=NMODEL-100+NMAX_MODELS
 C------------------------------------------------------------------------------
 C Valores por defecto
