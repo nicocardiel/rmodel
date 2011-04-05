@@ -2,9 +2,7 @@
 
 ## $Id$
 
-SUBDIRS = definitions models src m4
-
-ACLOCAL_AMFLAGS = -I m4
+SUBDIRS = definitions models src
 
 EXTRA_DIST = autogen.sh
 
