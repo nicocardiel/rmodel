@@ -16,5 +16,5 @@ C
 C You should have received a copy of the GNU General Public License
 C along with rmodel. If not, see <http://www.gnu.org/licenses/>.
 C------------------------------------------------------------------------------
-        CHARACTER*5 VERSION
+        CHARACTER*8 VERSION !format nn.nn.nn
         PARAMETER(VERSION='@VERSION@')
