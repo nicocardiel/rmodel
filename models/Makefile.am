@@ -1,5 +1,4 @@
 #
-# $Id$
 #
 modelsdir = $(DATA_DIR)/models
 ALLMODELS = model_bc01.dat model_bc01.def model_bc03.dat model_bc03.def \
