@@ -7,7 +7,7 @@
 AC_INIT(rmodel,3.2.0,[cardiel@fis.ucm.es])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([config.h.in])
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
 # Checks for programs
 AC_REVISION($Revision$)
