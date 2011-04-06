@@ -264,7 +264,7 @@ C------------------------------------------------------------------------------
 C Welcome message
         WRITE(*,203)
         WRITE(*,101) '                       Welcome to Rmodel '//
-     +   '(version '//VERSION//')'
+     +   '(version '//VERSION(1:TRUELEN(VERSION))//')'
         WRITE(*,202)
         WRITE(*,100) '   For more information visit:'
         WRITE(*,101) ' http://www.ucm.es/info/Astrof/software/rmodel'
