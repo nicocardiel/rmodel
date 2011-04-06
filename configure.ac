@@ -1,7 +1,5 @@
 # Process this file with autoconf to produce a configure script.
 #
-# $Id$
-#
 
 # Prelude
 AC_INIT(rmodel,3.2.0,[cardiel@fis.ucm.es])

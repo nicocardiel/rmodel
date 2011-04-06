@@ -1,4 +1,3 @@
-# $Id$
 #
 bin_PROGRAMS = rmodel
 rmodel_SOURCES = binsearch.f \
