@@ -35,6 +35,7 @@ AC_CHECK_LIB([X11], main,,AC_MSG_ERROR(X11 library not found))
 AC_CHECK_LIB([pgplot], main,,AC_MSG_ERROR(pgplot library not found))
 # Define in LIBS all the previous libraries
 LIBS="$LIBS"
+AC_MSG_RESULT(LIBS set to... $LIBS)
 
 # Definitions
 DEFAULT_DATA_DIR="/usr/local/share/rmodel"
