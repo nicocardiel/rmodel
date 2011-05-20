@@ -17,7 +17,7 @@ C You should have received a copy of the GNU General Public License
 C along with rmodel. If not, see <http://www.gnu.org/licenses/>.
 C------------------------------------------------------------------------------
         INTEGER NMAX_MODELS
-        PARAMETER (NMAX_MODELS=5)
+        PARAMETER (NMAX_MODELS=9)
         INTEGER NMAX_MODELS_MILES
         PARAMETER (NMAX_MODELS_MILES=1)
         INTEGER NMAX_PARAMETERS
