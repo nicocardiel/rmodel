@@ -1,0 +1,26 @@
+#------------------------------------------------------------------------------
+Para utilizar los modelos Vazdekis (2010):
+
+ssp_li_UN_v9.0
+ssp_li_BI_v9.0
+
+hay que borrar la primera columna ("UN" o "BI") y alterar el orden de los tres
+parámetros: slope, [M/H], Age -> Age, [M/H], slope
+porque el primer parámetro debe variar más rápido que el segundo, y éste a su
+vez más rápido que el tercero. Para mover las columnas utilizamos vim en modo
+"block cut and paste":
+
+Ctrl+V  ("V" mayúscula): entramos en modo block
+Crtl+d: avanzamos líneas hasta llegar al final de la columna a seleccionar
+x: para borrar columna
+nos colocamos en la primera línea y en el lugar que necesitemos
+P ("P" mayúscula): para pegar la columna
+
+Para los ficheros
+
+ssp_li_KU_v9.0
+ssp_li_KB_v9.0
+
+el proceso es similar, pero borrando las dos primeras columnas (imf, slope), y
+dejando sólo dos parámetros: [M/H], Age -> Age, [M/H]
+#------------------------------------------------------------------------------

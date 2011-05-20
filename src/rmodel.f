@@ -26,6 +26,10 @@ C unidad el valor del parametro NMAX_MODELS en el fichero "dimensions.inc",
 C e incluir en "rmodel.f" la raiz del nombre de los modelos (ir a la linea
 C inicial del codigo en la que se define el DATA(MODELFILE(I)...).
 C
+C Importante: el parámetro que debe variar más rápido es el que aparece en la
+C primera colummna; después el que aparece en la segunda columna; y así
+C sucesivamente si hay más parámetros.
+C
 C En una versión más reciente, también se ha incluido NMAX_MODELS_MILES
 C para poder incluir modelos calculados con los modelos de MILES con una
 C numeración diferente.
@@ -282,7 +286,11 @@ C
      +   'models/model_bc03',
      +   'models/model_lw05',
      +   'models/model_thomas03',
-     +   'models/model_vazdekis06'
+     +   'models/model_vazdekis06',
+     +   'models/model_vazdekis10_ssp_li_UN_v9.0',
+     +   'models/model_vazdekis10_ssp_li_BI_v9.0',
+     +   'models/model_vazdekis10_ssp_li_KU_v9.0',
+     +   'models/model_vazdekis10_ssp_li_KB_v9.0'
      +  /
         DATA(MODELFILE(I),I=NMAX_MODELS+1,NMAX_MODELS+NMAX_MODELS_MILES)
      +  /
@@ -790,7 +798,8 @@ C indices
           END IF
           KEXPECTED(J)=MOD((I-1)/NUMTEMP,LEN_PARAMETER(J))+1
         END DO
-22      READ(10,101,ERR=997,END=996) CLONGLINE
+22      CONTINUE
+        READ(10,101,ERR=997,END=996) CLONGLINE
         !si la linea contiene tabuladores, los eliminamos
         IF(INDEX(CLONGLINE,CHAR(9)).NE.0) CALL CLEANTAB(CLONGLINE)
         !si alguno de los parametros leidos no coincide con lo esperado,
@@ -813,7 +822,8 @@ C indices
             WRITE(*,101) CLONGLINE(L1:L2)
             STOP
           END IF
-          IF(FDUM_XPARAMETER(J)-XPARAMETER(KEXPECTED(J),J).NE.0.0)THEN
+          IF(ABS(FDUM_XPARAMETER(J)-XPARAMETER(KEXPECTED(J),J))
+     +       .GT.1.E-7)THEN !usamos 1E-7 para evitar errores de redondeo
             GOTO 22
           END IF
         END DO
