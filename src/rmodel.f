@@ -824,6 +824,10 @@ C indices
           END IF
           IF(ABS(FDUM_XPARAMETER(J)-XPARAMETER(KEXPECTED(J),J))
      +       .GT.1.E-7)THEN !usamos 1E-7 para evitar errores de redondeo
+!           print*,'Skipping line:'
+!           print*,'FDUM_XPARAMETER(J):',FDUM_XPARAMETER(J)
+!           print*,'XPARAMETER(KEXPECTED(J),J):',
+!    +       XPARAMETER(KEXPECTED(J),J)
             GOTO 22
           END IF
         END DO
