@@ -54,6 +54,8 @@ C
         CHARACTER*8 CNAME
         CHARACTER*60 CLDOS
         CHARACTER*255 RMODEL_DIR
+        CHARACTER*1000 FILEINDEX
+        LOGICAL LOGFILE
 C------------------------------------------------------------------------------
         RMODEL_DIR=RMODEL_DIR_
         LD1=TRUEBEG(RMODEL_DIR)
@@ -72,10 +74,16 @@ C las etiquetas no cambian salvo en casos particulares
           CLABEL='[MgFe]'//CHAR(39)
         END IF
 C
-        OPEN(33,FILE=RMODEL_DIR(LD1:LD2)//'/myindex.rmodel',
-     +   STATUS='OLD',FORM='FORMATTED')
-        READ(33,*,END=900)
-        READ(33,*,END=900)
+        FILEINDEX='myindex_user.rmodel'
+        INQUIRE(FILE=FILEINDEX,EXIST=LOGFILE)
+        IF(.NOT.LOGFILE)THEN
+          FILEINDEX=RMODEL_DIR(LD1:LD2)//'/myindex.rmodel'
+        END IF
+        WRITE(*,100) '>>> Reading file: '
+        WRITE(*,101) FILEINDEX(1:TRUELEN(FILEINDEX))
+        OPEN(33,FILE=FILEINDEX,STATUS='OLD',FORM='FORMATTED',ERR=900)
+        READ(33,*,END=910)
+        READ(33,*,END=910)
 10      READ(33,'(A8,1X,I4,1X,A60)',END=12,ERR=900)
      +   CNAME,ITI,CLDOS
         IF(ITI.LE.100)THEN
@@ -219,8 +227,13 @@ C------------------------------------------------------------------------------
         STOP
 C------------------------------------------------------------------------------
 900     CONTINUE
-        WRITE(*,101) 'FATAL ERROR: while reading this file'
-        WRITE(*,101) '==> myindex.rmodel'
+        WRITE(*,101) 'FATAL ERROR: while reading:'
+        WRITE(*,101) FILEINDEX
+        STOP
+C
+910     CONTINUE
+        WRITE(*,101) 'FATAL ERROR: unexpected EOF while reading:'
+        WRITE(*,101) FILEINDEX
         STOP
 C
 100     FORMAT(A,$)
