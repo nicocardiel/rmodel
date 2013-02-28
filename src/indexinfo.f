@@ -205,7 +205,11 @@ C..............................................................................
               CUNITS='mag'
             END IF
           ELSE
-            LLOG=.FALSE.
+            IF(ITI.EQ.99)THEN
+              LLOG=.TRUE.
+            ELSE
+              LLOG=.FALSE.
+            END IF
           END IF
           IF(LREV)THEN
             CLREV='y'
