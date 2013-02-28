@@ -258,3 +258,33 @@ J-H        99  > Filters 55 and 56 of filterfrm.res (bc01) (Note: Xi in units of
 H-K        99  > Filters 56 and 57 of filterfrm.res (bc01) (Note: Xi in units of 1E-4)
                2641.55396  3.26360869
                3614.57715  2.33424425
+u-g_SDSS   99  > Filters 48 and 49 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               567.73566   13.916341
+               1263.7393   6.6614389
+u-r_SDSS   99  > Filters 48 and 50 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               567.73566   13.916341
+               1332.8744   6.7627544
+u-i_SDSS   99  > Filters 48 and 51 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               567.73566   13.916341
+               1348.8998   6.0774741
+u-z_SDSS   99  > Filters 48 and 52 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               567.73566   13.916341
+               1309.3387   5.3896890
+g-r_SDSS   99  > Filters 49 and 50 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1263.7393   6.6614389
+               1332.8744   6.7627544
+g-i_SDSS   99  > Filters 49 and 51 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1263.7393   6.6614389
+               1348.8998   6.0774741
+g-z_SDSS   99  > Filters 49 and 52 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1263.7393   6.6614389
+               1309.3387   5.3896890
+r-i_SDSS   99  > Filters 50 and 51 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1332.8744   6.7627544
+               1348.8998   6.0774741
+r-z_SDSS   99  > Filters 50 and 52 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1332.8744   6.7627544
+               1309.3387   5.3896890
+i-z_SDSS   99  > Filters 51 and 52 of kolores (Note: Xi in units of 1E-4; computed with kolores)
+               1348.8998   6.0774741
+               1309.3387   5.3896890
