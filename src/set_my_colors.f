@@ -32,27 +32,34 @@ C
         CHARACTER*255 CLINE
         LOGICAL LOGFILE
 C------------------------------------------------------------------------------
-        RMODEL_DIR=RMODEL_DIR_
-        L1=TRUEBEG(RMODEL_DIR)
-        L2=TRUELEN(RMODEL_DIR)
-        INQUIRE(FILE=RMODEL_DIR(L1:L2)//'/mycolors.dat',EXIST=LOGFILE)
+        INQUIRE(FILE='mycolors.dat',EXIST=LOGFILE)
         IF(LOGFILE)THEN
-          OPEN(47,FILE=RMODEL_DIR(L1:L2)//'/mycolors.dat',STATUS='OLD',
-     +     FORM='FORMATTED')
-10        READ(47,101,END=20) CLINE
-          IF(CLINE(1:1).EQ.'#') GOTO 10 !ignora comentario en primera columna
-          READ(CLINE,*,ERR=90) CI,CR,CG,CB
-          CALL PGSCR(CI,CR,CG,CB)
-          GOTO 10
-20        CLOSE(47)
+          OPEN(47,FILE='mycolors.dat',STATUS='OLD',FORM='FORMATTED')
         ELSE
-          WRITE(*,*)
-          WRITE(*,101) '********************************************'
-          WRITE(*,101) 'WARGNING: the following file does not exist!'
-          WRITE(*,101) RMODEL_DIR(L1:L2)//'/mycolors.dat'
-          WRITE(*,101) '********************************************'
-          WRITE(*,*)
+          RMODEL_DIR=RMODEL_DIR_
+          L1=TRUEBEG(RMODEL_DIR)
+          L2=TRUELEN(RMODEL_DIR)
+          INQUIRE(FILE=RMODEL_DIR(L1:L2)//'/mycolors.dat',EXIST=LOGFILE)
+          IF(LOGFILE)THEN
+            OPEN(47,FILE=RMODEL_DIR(L1:L2)//'/mycolors.dat',
+     +       STATUS='OLD',FORM='FORMATTED')
+          ELSE
+            WRITE(*,*)
+            WRITE(*,101) '********************************************'
+            WRITE(*,101) 'WARGNING: the following file does not exist!'
+            WRITE(*,101) RMODEL_DIR(L1:L2)//'/mycolors.dat'
+            WRITE(*,101) '********************************************'
+            WRITE(*,*)
+            RETURN
+          END IF
         END IF
+C
+10      READ(47,101,END=20) CLINE
+        IF(CLINE(1:1).EQ.'#') GOTO 10 !ignora comentario en primera columna
+        READ(CLINE,*,ERR=90) CI,CR,CG,CB
+        CALL PGSCR(CI,CR,CG,CB)
+        GOTO 10
+20      CLOSE(47)
         RETURN
 C
 90      WRITE(*,101) 'FATAL ERROR while reading the file:'
