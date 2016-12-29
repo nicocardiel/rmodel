@@ -6,7 +6,7 @@
 Welcome to rmodel's documentation!
 ==================================
 
-**rmodel* is a program written in FORTRAN that determines stellar population
+**rmodel** is a program written in FORTRAN 77 that determines stellar population
 parameters (e.g. age, metallicity, IMF slope,...), using as input line-strength
 indices, through the interpolation in SSP model predictions.
 

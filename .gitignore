@@ -12,3 +12,5 @@ src/rmodel.dSYM/
 src/rmodel.inc
 src/version.inc
 stamp-h1
+
+docs/_build
