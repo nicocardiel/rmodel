@@ -1,0 +1,14 @@
+Makefile
+autom4te.cache/
+compile
+config.h
+config.log
+config.status
+definitions/Makefile
+models/Makefile
+src/Makefile
+src/dimensions.inc
+src/rmodel.dSYM/
+src/rmodel.inc
+src/version.inc
+stamp-h1
