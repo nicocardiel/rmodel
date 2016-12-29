@@ -1,9 +1,10 @@
-This is rmodel, a program that interpolates stellar population parameters from
-line-strength index measurements, making use of stellar population model
-predictions.
+This is rmodel, a Fortran 77 program that interpolates stellar population
+parameters from line-strength index measurements, making use of stellar
+population model predictions.
 
 This software is distributed under GPL , either version 3 of the License, or
 (at your option) any later version. See the file COPYING for details.
 
 Maintainer: Nicolás Cardiel, cardiel@ucm.es
-Webpage: https://github.com/nicocardiel/rmodel
+Webpage (documentation): http://rmodel.readthedocs.io/
+Webpage (source code): https://github.com/nicocardiel/rmodel
