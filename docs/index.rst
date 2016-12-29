@@ -10,6 +10,11 @@ Welcome to rmodel's documentation!
 parameters (e.g. age, metallicity, IMF slope,...), using as input line-strength
 indices, through the interpolation in SSP model predictions.
 
+
+.. image:: images/Hbeta-C4668.png
+   :scale: 70%
+   :align: center
+
 .. toctree::
    :maxdepth: 2
 
