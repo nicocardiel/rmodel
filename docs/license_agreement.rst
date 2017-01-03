@@ -11,6 +11,6 @@ permission.
 
 Send bugs, questions and suggestions to cardiel@ucm.es.
 
-Please, acknowledge the use of this program by citing Cardiel2003_.
+Please, acknowledge the use of this program by citing Cardiel_etal_2003_.
 
-.. _Cardiel2003: http://cdsads.u-strasbg.fr/abs/2003A%26A...409..511C
+.. _Cardiel_etal_2003: http://cdsads.u-strasbg.fr/abs/2003A%26A...409..511C
