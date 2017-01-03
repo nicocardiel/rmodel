@@ -1,0 +1,23 @@
+# rmodel version: 02.6
+###############################################################################
+           4 # Model number
+           1 # number of 1st free parameter
+           2 # number of 2nd free parameter
+           1 # number of fixed value for [alpha/Fe]
+          12 # number of 1st index
+           n # force logarithmic units?
+           n # reverse axis in plots?
+          13 # number of 2nd index
+           n # force logarithmic units?
+           n # reverse axis in plots?
+           i # Menu option
+sample.dat   # external ASCII file with data
+           y # estimate parameters for all objects?
+sample.dat_rmodel # output ASCII file with results
+           n # pause between plots?
+           3 # method to find best polygon
+        1000 # no. of simulations
+        1234 # NSEED for random numbers
+rmodel_simul.out # output file for simulations
+           q # Menu option
+END_of_rmodel.log
