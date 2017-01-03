@@ -32,9 +32,10 @@ To install **rmodel** you need to perform the following steps:
 ::
 
    $ cd rmodel
+   $ autoreconf -i -s -f
    $ ./configure
 
-.. note:: Mac users can easily indicate the Fortran compiler using
+.. note:: Mac users can easily indicate a different Fortran compiler using
       ``./configure F77=gfortran-mp-5``.
 
 If you do not have root privileges, you can install **rmodel** in any local
