@@ -11,6 +11,10 @@ src/dimensions.inc
 src/rmodel.dSYM/
 src/rmodel.inc
 src/version.inc
+src/*.o
+src/rmodel
 stamp-h1
+
+.gitignore~
 
 docs/_build

@@ -270,8 +270,8 @@ C Welcome message
         WRITE(*,101) '                       Welcome to Rmodel '//
      +   '(version '//VERSION(1:TRUELEN(VERSION))//')'
         WRITE(*,202)
-        WRITE(*,100) '   For more information visit:'
-        WRITE(*,101) ' http://www.ucm.es/info/Astrof/software/rmodel'
+        WRITE(*,100) '       For more information visit:'
+        WRITE(*,101) ' https://github.com/nicocardiel/rmodel'
         WRITE(*,203)
         WRITE(*,*)
 C definimos los ficheros con las especificaciones de cada modelo
