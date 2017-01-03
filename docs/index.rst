@@ -37,7 +37,7 @@ degenerate).
 .. toctree::
    :maxdepth: 2
 
-   installation
    license_agreement
+   installation
    the_ssp_model_predictions
    using_the_program
