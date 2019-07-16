@@ -201,7 +201,7 @@ An example of some of the definitions that can be found in the file
 
   .. math::
   
-    −2.5 \log_{10}\frac{\mbox{Flux_blue}}{\mbox{Flux_red}},
+    −2.5 \log_{10}\frac{\mbox{Flux\_blue}}{\mbox{Flux\_red}},
     
   is exemplified by the CO index at 2.1 microns CO_KH (e.g.
   Kleinmann_Hall_1986_).
