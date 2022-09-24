@@ -197,6 +197,7 @@ C
         REAL XEL(NPOINTSELLIPSE),YEL(NPOINTSELLIPSE)
         REAL XOBJ(NMAX_OBJECTS),EXOBJ(NMAX_OBJECTS)
         REAL YOBJ(NMAX_OBJECTS),EYOBJ(NMAX_OBJECTS)
+        REAL XPDUM(NSIMULMAX),YPDUM(NSIMULMAX)
         CHARACTER*1 CSAVE
         CHARACTER*1 CCHAR
         CHARACTER*1 CFPOINT,CCHECK
@@ -1191,7 +1192,10 @@ C mejor ajuste
           !dibujamos el punto
           IF(CPAUSE.NE.'k')THEN
             CALL PGSCI(5)
-            CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            !!!CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            XPDUM(1)=INDEX_X
+            YPDUM(1)=INDEX_Y
+            CALL PGPOINT(1,XPDUM,YPDUM,17)
             CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
             CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
             CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
@@ -1320,7 +1324,10 @@ C mejor ajuste
         INDY0=ARRAY2(IPAR1_MIN,IPAR2_MIN)
         IF(CPAUSE.NE.'k')THEN
           CALL PGSCI(5)
-          CALL PGPOINT(1,INDX0,INDY0,17)
+          !!!CALL PGPOINT(1,INDX0,INDY0,17)
+          XPDUM(1)=INDX0
+          YPDUM(1)=INDY0
+          CALL PGPOINT(1,XPDUM,YPDUM,17)
           CALL PGSCI(1)
         END IF
         IF(CCHAR.NE.'?')THEN
@@ -2110,7 +2117,10 @@ C
             R2=RANRED(NSEED)*6.283185307
             ERRIY=1.4142136*EINDEX_Y*SQRT(-ALOG(1.-R1))*COS(R2)
             IF(CPAUSE.NE.'k')THEN
-              CALL PGPOINT(1,INDEX_X+ERRIX,INDEX_Y+ERRIY,1)
+              !!!CALL PGPOINT(1,INDEX_X+ERRIX,INDEX_Y+ERRIY,1)
+              XPDUM(1)=INDEX_X+ERRIX
+              YPDUM(1)=INDEX_Y+ERRIY
+              CALL PGPOINT(1,XPDUM,YPDUM,1)
             END IF
             !calculamos edad y metalicidad del nuevo punto usando la
             !transformacion cuadratica
@@ -2119,7 +2129,10 @@ C
           END DO
           IF(CPAUSE.NE.'k')THEN
             CALL PGSCI(5)
-            CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            !!!CALL PGPOINT(1,INDEX_X,INDEX_Y,17)
+            XPDUM(1)=INDEX_X
+            YPDUM(1)=INDEX_Y
+            CALL PGPOINT(1,XPDUM,YPDUM,17)
             CALL PGERR1(1,INDEX_X,INDEX_Y,EINDEX_X,1.0)
             CALL PGERR1(2,INDEX_X,INDEX_Y,EINDEX_Y,1.0)
             CALL PGERR1(3,INDEX_X,INDEX_Y,EINDEX_X,1.0)
@@ -2187,7 +2200,10 @@ C
             CALL PGSCI(14)
             CALL PGPOINT(NSIMUL,FPAR2_SIMUL,FPAR1_SIMUL,1)
             CALL PGSCI(5)
-            CALL PGPOINT(1,FPAR2_FIT,FPAR1_FIT,17)
+            !!!CALL PGPOINT(1,FPAR2_FIT,FPAR1_FIT,17)
+            XPDUM(1)=FPAR2_FIT
+            YPDUM(1)=FPAR1_FIT
+            CALL PGPOINT(1,XPDUM,YPDUM,17)
             DO I=1,NPMAX
               XX=INDEX_X+REAL(I-1)/REAL(NPMAX-1)*EINDEX_X
               CALL FMAP(2,AIJ,BIJ,XX,INDEX_Y,FPAR2_P,FPAR1_P)
@@ -2358,7 +2374,10 @@ C              indices no medidos en magnitudes
             R2=RANRED(NSEED)*6.283185307
             ERRIY=
      +       1.4142136*RHO_Y*FERRY/SNRATY*SQRT(-ALOG(1.-R1))*COS(R2)
-            CALL PGPOINT(1,INDX0+ERRIX,INDY0+ERRIY,1)
+            !!!CALL PGPOINT(1,INDX0+ERRIX,INDY0+ERRIY,1)
+            XPDUM(1)=INDX0+ERRIX
+            YPDUM(1)=INDY0+ERRIY
+            CALL PGPOINT(1,XPDUM,YPDUM,1)
             DELTA_IX(K)=ERRIX
             DELTA_IY(K)=ERRIY
             DELTA_PAR2(K)=(A22*ERRIX/RHO_X-A12*ERRIY/RHO_Y)/DETA
@@ -2425,7 +2444,10 @@ C              indices no medidos en magnitudes
           CALL PGERR1(4,INDX0,INDY0,RHO_Y*FERRY/SNRATY,1.0)
           CALL PGSLW(1)
           CALL PGSCI(2)
-          CALL PGPOINT(1,INDX0,INDY0,17)
+          !!!CALL PGPOINT(1,INDX0,INDY0,17)
+          XPDUM(1)=INDX0
+          YPDUM(1)=INDY0
+          CALL PGPOINT(1,XPDUM,YPDUM,17)
           CALL PGSCI(1)
           CALL PGSLW(2)
 c calculamos media y dispersión
@@ -2485,7 +2507,10 @@ c plot delta(parameter1) vs. delta(parameter2)
           CALL PGERR1(4,MEANERR_PAR2,MEANERR_PAR1,SIGMAERR_PAR1,1.0)
           CALL PGSLW(1)
           CALL PGSCI(2)
-          CALL PGPOINT(1,MEANERR_PAR2,MEANERR_PAR1,17)
+          !!!CALL PGPOINT(1,MEANERR_PAR2,MEANERR_PAR1,17)
+          XPDUM(1)=MEANERR_PAR2
+          YPDUM(1)=MEANERR_PAR1
+          CALL PGPOINT(1,XPDUM,YPDUM,17)
           CALL PGSCI(1)
           CALL PGSLW(2)
           CALL PGLABEL('\gD'//CPARAMETER(NPARAM(2)),
