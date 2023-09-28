@@ -224,7 +224,7 @@ An example of some of the definitions that can be found in the file
   continuum and absorption spectral bandpasses at both sides of the
   discontinuity. For this kind of index, the wavelengths which define each
   bandpass are given in different rows in the file myindex.rmodel For
-  illustration, see Mármol-Queraltó_etal_2008_ for a detailed definition of the
+  illustration, see Marmol-Queralto_etal_2008_ for a detailed definition of the
   D_C0 index.
 
 * The slope indices are derived through the fit of a straight line to an 
@@ -240,9 +240,8 @@ An example of some of the definitions that can be found in the file
 .. _Gorgas_etal_1999: http://cdsads.u-strasbg.fr/abs/1999A%26AS..139...29G
 .. _Kleinmann_Hall_1986: http://cdsads.u-strasbg.fr/abs/1986ApJS...62..501K
 .. _Lee_Worthey_2005: http://cdsads.u-strasbg.fr/abs/2005ApJS..160..176L
-.. _Mármol-Queraltó_etal_2008: http://adsabs.harvard.edu/abs/2008A%26A...489..885M
+.. _Marmol-Queralto_etal_2008: http://adsabs.harvard.edu/abs/2008A%26A...489..885M
 .. _Thomas_Maraston_Bender_2003: http://cdsads.u-strasbg.fr/abs/2003MNRAS.339..897T
 .. _Trager_etal_1998: http://cdsads.u-strasbg.fr/abs/1998ApJS..116....1T
 .. _Vazdekis_etal_2003: http://cdsads.u-strasbg.fr/abs/2003MNRAS.340.1317V
 .. _Vazdekis_etal_2007: http://cdsads.u-strasbg.fr/abs/2007IAUS..241..133V
-
