@@ -35,8 +35,8 @@ To install **rmodel** you need to perform the following steps:
    $ autoreconf -i -s -f
    $ ./configure
 
-.. note:: Mac users can easily indicate a different Fortran compiler using
-      ``./configure F77=gfortran-mp-5``.
+.. note:: Mac users can easily indicate different Fortran and C compilers using
+      ``./configure F77=gfortran-mp-13 CC=gcc-mp-13``.
 
 If you do not have root privileges, you can install **rmodel** in any local
 directory where you have write access. In this case you need a personalized
